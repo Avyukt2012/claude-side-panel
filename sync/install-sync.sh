@@ -8,7 +8,8 @@ LABEL=com.avyukt.claudedock.sync
 PLIST="$HOME/Library/LaunchAgents/$LABEL.plist"
 
 if [ -d "$DEST/.git" ]; then
-  /usr/bin/git -C "$DEST" pull --ff-only --quiet
+  /usr/bin/git -C "$DEST" fetch -q origin main
+  /usr/bin/git -C "$DEST" reset -q --hard origin/main
 else
   rm -rf "$DEST"
   /usr/bin/git clone -q "$REPO" "$DEST"
@@ -25,7 +26,7 @@ cat > "$PLIST" <<PLISTEOF
   <array>
     <string>/bin/zsh</string>
     <string>-c</string>
-    <string>/usr/bin/git -C "\$HOME/ClaudeSidePanel" pull --ff-only --quiet</string>
+    <string>/usr/bin/git -C "\$HOME/ClaudeSidePanel" fetch -q origin main \&amp;\&amp; /usr/bin/git -C "\$HOME/ClaudeSidePanel" reset -q --hard origin/main</string>
   </array>
   <key>StartInterval</key><integer>600</integer>
   <key>RunAtLoad</key><true/>
