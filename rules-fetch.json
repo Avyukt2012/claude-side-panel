@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "requestHeaders": [
+        { "header": "sec-fetch-dest", "operation": "set", "value": "document" },
+        { "header": "sec-fetch-site", "operation": "set", "value": "none" },
+        { "header": "sec-fetch-mode", "operation": "set", "value": "navigate" },
+        { "header": "sec-fetch-user", "operation": "set", "value": "?1" }
+      ]
+    },
+    "condition": { "requestDomains": ["claude.ai"], "resourceTypes": ["sub_frame"] }
+  }
+]

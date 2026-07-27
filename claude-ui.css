@@ -1,0 +1,6 @@
+[data-dock-hide] { display: none !important; }
+
+html[data-dock-bottom] main > div:first-child,
+html[data-dock-bottom] main > div > div:first-child {
+  justify-content: flex-end !important;
+}
