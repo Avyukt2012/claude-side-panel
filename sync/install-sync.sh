@@ -25,8 +25,7 @@ cat > "$PLIST" <<PLISTEOF
   <key>ProgramArguments</key>
   <array>
     <string>/bin/zsh</string>
-    <string>-c</string>
-    <string>/usr/bin/git -C "\$HOME/ClaudeSidePanel" fetch -q origin main \&amp;\&amp; /usr/bin/git -C "\$HOME/ClaudeSidePanel" reset -q --hard origin/main</string>
+    <string>$DEST/sync/pull.sh</string>
   </array>
   <key>StartInterval</key><integer>600</integer>
   <key>RunAtLoad</key><true/>
