@@ -1,12 +1,11 @@
 {
   "manifest_version": 3,
   "name": "Claude",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Claude docked to the side of the page.",
   "minimum_chrome_version": "114",
   "permissions": [
     "storage",
-    "alarms",
     "declarativeNetRequestWithHostAccess"
   ],
   "host_permissions": [
@@ -51,9 +50,6 @@
       "js": [
         "claude-ui.js"
       ],
-      "css": [
-        "claude-ui.css"
-      ],
       "run_at": "document_start",
       "all_frames": true
     }
@@ -61,11 +57,21 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "panel.html"
+        "panel.html",
+        "dock.js"
       ],
       "matches": [
         "http://*/*",
         "https://*/*"
+      ]
+    },
+    {
+      "resources": [
+        "claude-tidy.js",
+        "claude-ui.css"
+      ],
+      "matches": [
+        "https://claude.ai/*"
       ]
     }
   ],
