@@ -1,4 +1,7 @@
 const frame = document.getElementById('f');
-const fromHash = location.hash ? decodeURIComponent(location.hash.slice(1)) : '';
 
-frame.src = fromHash.startsWith('https://claude.ai/') ? fromHash : 'https://claude.ai/new';
+chrome.storage.local.get('lastUrl').then(({ lastUrl }) => {
+  frame.src = typeof lastUrl === 'string' && lastUrl.startsWith('https://claude.ai/')
+    ? lastUrl
+    : 'https://claude.ai/new';
+});

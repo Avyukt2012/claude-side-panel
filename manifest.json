@@ -1,18 +1,17 @@
 {
   "manifest_version": 3,
   "name": "Claude",
-  "version": "2.0.7",
-  "description": "Claude docked to the side of the page.",
+  "version": "2.0.8",
+  "description": "Claude in the browser sidebar.",
   "minimum_chrome_version": "114",
   "permissions": [
     "storage",
-    "scripting",
-    "activeTab",
+    "sidePanel",
     "declarativeNetRequestWithHostAccess"
   ],
   "host_permissions": [
-    "http://*/*",
-    "https://*/*"
+    "https://claude.ai/*",
+    "https://*.claude.ai/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -40,7 +39,7 @@
         "https://claude.ai/*"
       ],
       "js": [
-        "content.js"
+        "preconnect.js"
       ],
       "run_at": "document_idle",
       "all_frames": false
@@ -57,16 +56,6 @@
     }
   ],
   "web_accessible_resources": [
-    {
-      "resources": [
-        "panel.html",
-        "dock.js"
-      ],
-      "matches": [
-        "http://*/*",
-        "https://*/*"
-      ]
-    },
     {
       "resources": [
         "claude-tidy.js",
@@ -99,5 +88,8 @@
       },
       "description": "Toggle Claude"
     }
+  },
+  "side_panel": {
+    "default_path": "panel.html"
   }
 }
