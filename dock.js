@@ -1,4 +1,8 @@
 const HOST_ID = 'claude-dock-host';
+
+if (document.documentElement.dataset.claudeDock === 'ready') {
+  throw new Error('claude dock already loaded in this page');
+}
 const MIN_W = 300;
 const MAX_W = 900;
 
@@ -94,6 +98,8 @@ function toggle() {
   const shown = host && host.style.display !== 'none';
   shown ? close() : open();
 }
+
+document.documentElement.dataset.claudeDock = 'ready';
 
 chrome.runtime.onMessage.addListener(msg => {
   if (msg.type === 'toggle') toggle();
