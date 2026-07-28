@@ -9,6 +9,7 @@ const MAX_W = 900;
 let host = null;
 let shadow = null;
 let width = 420;
+let lastUrl = '';
 
 function build() {
   host = document.createElement('div');
@@ -42,7 +43,8 @@ function build() {
   grip.className = 'grip';
 
   const frame = document.createElement('iframe');
-  frame.src = chrome.runtime.getURL('panel.html');
+  frame.src = chrome.runtime.getURL('panel.html')
+    + (lastUrl ? '#' + encodeURIComponent(lastUrl) : '');
   frame.setAttribute('allow', 'clipboard-read; clipboard-write; microphone; camera; fullscreen');
 
   dock.append(grip, frame);
@@ -106,7 +108,16 @@ chrome.runtime.onMessage.addListener(msg => {
   if (msg.type === 'close') close();
 });
 
-chrome.storage.local.get(['open', 'width']).then(s => {
+for (const host of ['https://claude.ai', 'https://assets-proxy.anthropic.com', 'https://a.claude.ai']) {
+  const link = document.createElement('link');
+  link.rel = 'preconnect';
+  link.href = host;
+  link.crossOrigin = '';
+  document.documentElement.append(link);
+}
+
+chrome.storage.local.get(['open', 'width', 'lastUrl']).then(s => {
   if (typeof s.width === 'number') width = s.width;
+  lastUrl = typeof s.lastUrl === 'string' ? s.lastUrl : '';
   if (s.open) open();
 });
