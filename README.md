@@ -14,7 +14,9 @@ iframe without tripping Cloudflare's bot check.
 curl -fsSL https://raw.githubusercontent.com/Avyukt2012/claude-side-panel/main/sync/install-sync.sh | zsh
 ```
 
-Clones to `~/ClaudeSidePanel` and installs a launchd agent that pulls every 10 minutes.
+Downloads to `~/ClaudeSidePanel` and installs a launchd agent that re-syncs every 10
+minutes. Uses only `curl`, `tar` and `rsync` - all base macOS - so it needs no git
+and no Xcode Command Line Tools.
 Then load it once: `edge://extensions` → Developer mode → Load unpacked → `~/ClaudeSidePanel`.
 
 Toggle with the toolbar icon or Alt+C. Drag the left edge to resize.
