@@ -68,9 +68,43 @@ function remember() {
   chrome.storage.local.set({ lastUrl: location.href });
 }
 
+
+function hideGreeting() {
+  const path = location.pathname;
+  if (path !== '/new' && path !== '/') return;
+  for (const el of document.querySelectorAll('h1, h2')) {
+    if (el.closest('form, [contenteditable="true"], nav, header')) continue;
+    const t = (el.innerText || '').trim();
+    if (t && t.length < 120) el.setAttribute('data-dock-hide', '');
+  }
+}
+
+function hideCookieBanner() {
+  for (const el of document.querySelectorAll('h1, h2, h3, strong, p, span')) {
+    const t = (el.textContent || '').trim().toLowerCase();
+    if (!t.startsWith('cookie settings') && !t.startsWith('we use cookies')) continue;
+
+    let node = el;
+    for (let i = 0; i < 7; i++) {
+      const parent = node.parentElement;
+      if (!parent || parent === document.body || parent === document.documentElement) break;
+      // never hide something that contains the app itself
+      if (parent.querySelector('#root, main, div[contenteditable="true"]')) break;
+      const r = parent.getBoundingClientRect();
+      if (r.height > window.innerHeight * 0.5) break;
+      node = parent;
+      if (r.height > 110) break;
+    }
+    node.setAttribute('data-dock-hide', '');
+    return;
+  }
+}
+
 function tidy() {
   document.documentElement.setAttribute('data-dock-bottom', '');
   hideChips();
+  hideGreeting();
+  hideCookieBanner();
   pinComposer();
   remember();
 }
