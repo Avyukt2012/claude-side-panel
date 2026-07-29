@@ -69,13 +69,54 @@ function remember() {
 }
 
 
+function isLeafText(el) {
+  const t = (el.textContent || '').trim();
+  if (!t) return false;
+  for (const c of el.children) if ((c.textContent || '').trim()) return false;
+  return true;
+}
+
+function safeContainer(el, maxHeight) {
+  let node = el;
+  for (let i = 0; i < 4; i++) {
+    const parent = node.parentElement;
+    if (!parent || parent === document.body || parent === document.documentElement) break;
+    if (parent.querySelector('#root, main, div[contenteditable="true"]')) break;
+    if (parent.getBoundingClientRect().height > maxHeight) break;
+    node = parent;
+  }
+  return node;
+}
+
+function onNewChat() {
+  const p = location.pathname;
+  return p === '/' || p === '/new' || p.startsWith('/new');
+}
+
 function hideGreeting() {
-  const path = location.pathname;
-  if (path !== '/new' && path !== '/') return;
-  for (const el of document.querySelectorAll('h1, h2')) {
-    if (el.closest('form, [contenteditable="true"], nav, header')) continue;
-    const t = (el.innerText || '').trim();
-    if (t && t.length < 120) el.setAttribute('data-dock-hide', '');
+  if (!onNewChat()) return;
+  for (const el of document.querySelectorAll('h1, h2, h3, p, div, span')) {
+    if (!isLeafText(el)) continue;
+    if (el.closest('form, nav, header, [contenteditable="true"], [data-dock-hide]')) continue;
+    const size = parseFloat(getComputedStyle(el).fontSize) || 0;
+    const r = el.getBoundingClientRect();
+    if (size >= 22 && r.height > 0 && r.height < 220) el.setAttribute('data-dock-hide', '');
+  }
+}
+
+const PLAN_LABELS = [
+  'upgrade', 'upgrade plan', 'upgrade to pro', 'try pro', 'free plan',
+  'your plan', 'get more usage', 'usage limit'
+];
+
+function hidePlanNag() {
+  for (const el of document.querySelectorAll('button, a, div, span, p')) {
+    if (!isLeafText(el)) continue;
+    if (el.closest('[data-dock-hide]')) continue;
+    const t = (el.textContent || '').trim().toLowerCase();
+    if (!t || t.length > 28) continue;
+    if (!PLAN_LABELS.some(l => t === l || t.startsWith(l))) continue;
+    safeContainer(el, 140).setAttribute('data-dock-hide', '');
   }
 }
 
@@ -104,6 +145,7 @@ function tidy() {
   document.documentElement.setAttribute('data-dock-bottom', '');
   hideChips();
   hideGreeting();
+  hidePlanNag();
   hideCookieBanner();
   pinComposer();
   remember();
