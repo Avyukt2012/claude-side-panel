@@ -61,6 +61,25 @@ function pinComposer() {
   wrap.style.setProperty('z-index', '40', 'important');
 }
 
+// The panel is a third-party context, so Edge partitions claude.ai's cookies and
+// nothing persists between opens. Ask for unpartitioned access - it needs a user
+// gesture the first time, so retry on the first interaction too.
+async function ensureStorageAccess() {
+  if (window.top === window.self) return;
+  if (!document.requestStorageAccess) return;
+  try {
+    if (await document.hasStorageAccess()) return;
+    await document.requestStorageAccess();
+  } catch (e) {
+    // needs a gesture, or the user declined; the listener below tries again
+  }
+}
+
+ensureStorageAccess();
+for (const evt of ['pointerdown', 'keydown']) {
+  document.addEventListener(evt, ensureStorageAccess, { once: true, capture: true });
+}
+
 let lastSeen = '';
 function remember() {
   if (location.href === lastSeen) return;
