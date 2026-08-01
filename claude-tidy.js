@@ -80,6 +80,23 @@ for (const evt of ['pointerdown', 'keydown']) {
   document.addEventListener(evt, ensureStorageAccess, { once: true, capture: true });
 }
 
+let lastRecorded = '';
+function recordChat() {
+  const m = location.pathname.match(/^\/chat\/([0-9a-zA-Z-]{8,})/);
+  if (!m) return;
+  const title = (document.title || '').replace(/\s*[-\u2013]\s*Claude\s*$/i, '').trim();
+  if (!title || /^claude$/i.test(title)) return;
+  const key = m[1] + '|' + title;
+  if (key === lastRecorded) return;
+  lastRecorded = key;
+
+  chrome.storage.local.get('chats').then(({ chats }) => {
+    const list = (Array.isArray(chats) ? chats : []).filter(c => c.id !== m[1]);
+    list.unshift({ id: m[1], url: location.origin + location.pathname, title, at: Date.now() });
+    chrome.storage.local.set({ chats: list.slice(0, 20) });
+  });
+}
+
 let lastSeen = '';
 function remember() {
   if (location.href === lastSeen) return;
@@ -168,6 +185,7 @@ function tidy() {
   hideCookieBanner();
   pinComposer();
   remember();
+  recordChat();
 }
 
 tidy();
